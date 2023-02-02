@@ -8,18 +8,38 @@
     <p id="ipAddress"></p>
     <script>
         window.onload = function() {
-        fetch('https://api.ipify.org?format=json')
-        .then(response => response.json())
-        .then(data => {
-        document.getElementById("ipAddress").innerHTML = "Your IP Address is: " + data.ip;
-        // Store the IP address in a text file
-        var blob = new Blob([data.ip], {type: "text/plain"});
-        var a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "user_ip.txt";
-        a.click();
+  fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById("ipAddress").innerHTML = "Your IP Address is: " + data.ip;
+      // Store the IP address in a text file
+      var blob = new Blob([data.ip], {type: "text/plain"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+//       a.download = "user_ip.txt";
+      a.click();
+      // Upload the text file to a GitHub repository
+      // (assuming you have access to the repository and an API key)
+      fetch("https://api.github.com/repos/AnandChoudhary7/findIP/contents/user_ip.txt", {
+        method: "PUT",
+        headers: {
+          "Authorization": "Token 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",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          "message": "Uploading user IP address",
+          "content": btoa(data.ip)
+        })
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log("The user IP address was successfully uploaded to the GitHub repository");
+          } else {
+            console.error("An error occurred while uploading the user IP address to the GitHub repository");
+          }
         });
-        };
+    });
+};
     </script>
 </body>
 
